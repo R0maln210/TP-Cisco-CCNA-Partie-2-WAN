@@ -1,0 +1,44 @@
+Oct 12 11:23:31.167 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 12 11:23:31.168 HYPERVISOR: Started on IP = localhost, TCP port = 58314.
+Oct 12 11:23:31.592 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 12 11:23:31.593 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\00 - Labs WAN - Cadre commun, rôles et communication\Lab WAN 00\project-files\dynamips 
+Oct 12 11:23:31.594 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\00 - Labs WAN - Cadre commun, rôles et communication\Lab WAN 00\project-files\dynamips
+Oct 12 11:23:31.631 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\00 - Labs WAN - Cadre commun, rôles et communication\Lab WAN 00\project-files\dynamips\32e00dd9-a09f-4751-99e1-babb35b7858a 
+Oct 12 11:23:31.632 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\00 - Labs WAN - Cadre commun, rôles et communication\Lab WAN 00\project-files\dynamips\32e00dd9-a09f-4751-99e1-babb35b7858a
+Oct 12 11:23:31.632 HYPERVISOR: exec_cmd: vm create R5 5 c7200 
+Oct 12 11:23:31.638 VM: VM R5 created.
+Oct 12 11:23:31.640 HYPERVISOR: exec_cmd: vm set_con_tcp_port R5 5020 
+Oct 12 11:23:31.641 HYPERVISOR: exec_cmd: c7200 get_mac_addr R5 
+Oct 12 11:23:31.641 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.641 HYPERVISOR: exec_cmd: vm slot_add_binding R5 0 0 C7200-IO-FE 
+Oct 12 11:23:31.642 HYPERVISOR: exec_cmd: vm set_disk0 R5 0 
+Oct 12 11:23:31.645 HYPERVISOR: exec_cmd: vm set_exec_area R5 64 
+Oct 12 11:23:31.646 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.646 HYPERVISOR: exec_cmd: vm set_idle_pc R5 0x60270810 
+Oct 12 11:23:31.648 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/xXRom/GNS3/images/IOS/c7200-advipservicesk9-mz.124-4.t1.image 
+Oct 12 11:23:31.648 HYPERVISOR: exec_cmd: c7200 set_mac_addr R5 ca05.19e8.0000 
+Oct 12 11:23:31.649 HYPERVISOR: exec_cmd: vm set_nvram R5 512 
+Oct 12 11:23:31.649 HYPERVISOR: exec_cmd: vm set_ram R5 512 
+Oct 12 11:23:31.650 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.650 HYPERVISOR: exec_cmd: vm slot_remove_binding R5 0 0 
+Oct 12 11:23:31.651 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.651 HYPERVISOR: exec_cmd: vm slot_add_binding R5 0 0 C7200-IO-GE-E 
+Oct 12 11:23:31.652 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.653 HYPERVISOR: exec_cmd: vm slot_add_binding R5 1 0 PA-GE 
+Oct 12 11:23:31.654 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.654 HYPERVISOR: exec_cmd: vm slot_add_binding R5 2 0 PA-GE 
+Oct 12 11:23:31.655 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.655 HYPERVISOR: exec_cmd: vm slot_add_binding R5 3 0 PA-GE 
+Oct 12 11:23:31.655 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.655 HYPERVISOR: exec_cmd: vm slot_add_binding R5 4 0 PA-2FE-TX 
+Oct 12 11:23:31.656 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.656 HYPERVISOR: exec_cmd: vm slot_add_binding R5 5 0 PA-2FE-TX 
+Oct 12 11:23:31.656 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:31.656 HYPERVISOR: exec_cmd: vm slot_add_binding R5 6 0 PA-4T+ 
+Oct 12 11:23:31.659 HYPERVISOR: exec_cmd: vm set_con_tcp_port R5 5020 
+Oct 12 11:23:37.740 HYPERVISOR: exec_cmd: nio create_udp udp-f9e9df52-fb5e-4d28-92f0-67a807030d13 10090 127.0.0.1 10091 
+Oct 12 11:23:38.637 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R5 1 0 udp-f9e9df52-fb5e-4d28-92f0-67a807030d13 
+Oct 12 11:23:38.639 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 12 11:23:38.731 HYPERVISOR: exec_cmd: nio create_udp udp-03e9b7b2-5e72-4472-be25-8d6a147a9253 10094 127.0.0.1 10095 
+Oct 12 11:23:38.769 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R5 2 0 udp-03e9b7b2-5e72-4472-be25-8d6a147a9253 
+Oct 12 11:23:38.771 HYPERVISOR: exec_cmd: vm get_status R5 

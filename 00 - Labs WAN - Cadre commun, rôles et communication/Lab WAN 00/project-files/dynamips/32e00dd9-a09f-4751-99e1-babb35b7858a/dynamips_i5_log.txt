@@ -1,0 +1,50 @@
+Oct 06 15:18:56.707 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 06 15:18:56.709 HYPERVISOR: Started on IP = localhost, TCP port = 52779.
+Oct 06 15:18:57.197 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 06 15:18:57.199 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips 
+Oct 06 15:18:57.199 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips
+Oct 06 15:18:57.199 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\a017f224-a7eb-4766-a967-c064ee278d68 
+Oct 06 15:18:57.232 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\a017f224-a7eb-4766-a967-c064ee278d68
+Oct 06 15:18:57.232 HYPERVISOR: exec_cmd: vm create R5 5 c7200 
+Oct 06 15:18:57.236 VM: VM R5 created.
+Oct 06 15:18:57.239 HYPERVISOR: exec_cmd: vm set_con_tcp_port R5 5008 
+Oct 06 15:18:57.239 HYPERVISOR: exec_cmd: c7200 get_mac_addr R5 
+Oct 06 15:18:57.239 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.239 HYPERVISOR: exec_cmd: vm slot_add_binding R5 0 0 C7200-IO-FE 
+Oct 06 15:18:57.240 HYPERVISOR: exec_cmd: vm set_disk0 R5 0 
+Oct 06 15:18:57.240 HYPERVISOR: exec_cmd: vm set_exec_area R5 64 
+Oct 06 15:18:57.242 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.242 HYPERVISOR: exec_cmd: vm set_idle_pc R5 0x60270810 
+Oct 06 15:18:57.244 HYPERVISOR: exec_cmd: vm set_ios R5 C:/Users/xXRom/GNS3/images/IOS/c7200-advipservicesk9-mz.124-4.t1.image 
+Oct 06 15:18:57.245 HYPERVISOR: exec_cmd: c7200 set_mac_addr R5 ca05.19e8.0000 
+Oct 06 15:18:57.245 HYPERVISOR: exec_cmd: vm set_nvram R5 512 
+Oct 06 15:18:57.246 HYPERVISOR: exec_cmd: vm set_ram R5 512 
+Oct 06 15:18:57.247 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.248 HYPERVISOR: exec_cmd: vm slot_remove_binding R5 0 0 
+Oct 06 15:18:57.248 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.248 HYPERVISOR: exec_cmd: vm slot_add_binding R5 0 0 C7200-IO-GE-E 
+Oct 06 15:18:57.248 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.248 HYPERVISOR: exec_cmd: vm slot_add_binding R5 1 0 PA-GE 
+Oct 06 15:18:57.248 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.249 HYPERVISOR: exec_cmd: vm slot_add_binding R5 2 0 PA-GE 
+Oct 06 15:18:57.249 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.249 HYPERVISOR: exec_cmd: vm slot_add_binding R5 3 0 PA-GE 
+Oct 06 15:18:57.249 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.249 HYPERVISOR: exec_cmd: vm slot_add_binding R5 4 0 PA-2FE-TX 
+Oct 06 15:18:57.250 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.250 HYPERVISOR: exec_cmd: vm slot_add_binding R5 5 0 PA-2FE-TX 
+Oct 06 15:18:57.250 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:18:57.252 HYPERVISOR: exec_cmd: vm slot_add_binding R5 6 0 PA-4T+ 
+Oct 06 15:19:00.805 HYPERVISOR: exec_cmd: nio create_udp udp-6f9ca7a7-d831-4090-8217-494106c72de8 10026 127.0.0.1 10027 
+Oct 06 15:19:01.742 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R5 1 0 udp-6f9ca7a7-d831-4090-8217-494106c72de8 
+Oct 06 15:19:01.743 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:19:01.861 HYPERVISOR: exec_cmd: nio create_udp udp-7a688c06-3664-4747-a6e4-28812175de3f 10030 127.0.0.1 10031 
+Oct 06 15:19:01.868 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R5 2 0 udp-7a688c06-3664-4747-a6e4-28812175de3f 
+Oct 06 15:19:01.870 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:23:39.774 HYPERVISOR: exec_cmd: vm set_ghost_status R5 2 
+Oct 06 15:23:39.775 HYPERVISOR: exec_cmd: vm set_ghost_file R5 C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\c7200-advipservicesk9-mz.124-4.t1.image-512.ghost 
+Oct 06 15:23:39.775 HYPERVISOR: exec_cmd: vm get_status R5 
+Oct 06 15:23:39.776 HYPERVISOR: exec_cmd: vm set_config R5 configs\i5_startup-config.cfg 
+Oct 06 15:23:39.776 HYPERVISOR: exec_cmd: vm start R5 
+Oct 06 15:24:10.050 HYPERVISOR: exec_cmd: vm extract_config R5 
+Oct 06 15:29:10.136 HYPERVISOR: exec_cmd: vm extract_config R5 

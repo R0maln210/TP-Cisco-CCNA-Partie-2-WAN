@@ -1,0 +1,72 @@
+Oct 06 15:18:54.360 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 06 15:18:54.362 HYPERVISOR: Started on IP = localhost, TCP port = 52767.
+Oct 06 15:18:54.467 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 06 15:18:54.468 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips 
+Oct 06 15:18:54.503 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips
+Oct 06 15:18:54.504 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\e2ffa33d-b3c4-4e45-8903-22472b526444 
+Oct 06 15:18:54.505 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\e2ffa33d-b3c4-4e45-8903-22472b526444
+Oct 06 15:18:54.505 HYPERVISOR: exec_cmd: vm create R1 1 c7200 
+Oct 06 15:18:54.506 VM: VM R1 created.
+Oct 06 15:18:54.508 HYPERVISOR: exec_cmd: vm set_con_tcp_port R1 5004 
+Oct 06 15:18:54.508 HYPERVISOR: exec_cmd: c7200 get_mac_addr R1 
+Oct 06 15:18:54.508 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.508 HYPERVISOR: exec_cmd: vm slot_add_binding R1 0 0 C7200-IO-FE 
+Oct 06 15:18:54.508 HYPERVISOR: exec_cmd: vm set_disk0 R1 0 
+Oct 06 15:18:54.508 HYPERVISOR: exec_cmd: vm set_exec_area R1 64 
+Oct 06 15:18:54.510 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.510 HYPERVISOR: exec_cmd: vm set_idle_pc R1 0x60270810 
+Oct 06 15:18:54.511 HYPERVISOR: exec_cmd: vm set_ios R1 C:/Users/xXRom/GNS3/images/IOS/c7200-advipservicesk9-mz.124-4.t1.image 
+Oct 06 15:18:54.511 HYPERVISOR: exec_cmd: c7200 set_mac_addr R1 ca01.201c.0000 
+Oct 06 15:18:54.511 HYPERVISOR: exec_cmd: vm set_nvram R1 512 
+Oct 06 15:18:54.512 HYPERVISOR: exec_cmd: vm set_ram R1 512 
+Oct 06 15:18:54.514 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.514 HYPERVISOR: exec_cmd: vm slot_remove_binding R1 0 0 
+Oct 06 15:18:54.514 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.514 HYPERVISOR: exec_cmd: vm slot_add_binding R1 0 0 C7200-IO-GE-E 
+Oct 06 15:18:54.514 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.514 HYPERVISOR: exec_cmd: vm slot_add_binding R1 1 0 PA-GE 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm slot_add_binding R1 2 0 PA-GE 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm slot_add_binding R1 3 0 PA-GE 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm slot_add_binding R1 4 0 PA-2FE-TX 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm slot_add_binding R1 5 0 PA-2FE-TX 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:54.515 HYPERVISOR: exec_cmd: vm slot_add_binding R1 6 0 PA-4T+ 
+Oct 06 15:18:57.337 HYPERVISOR: exec_cmd: nio create_udp udp-21f6a323-9ed3-411d-b37f-86c110ccc78b 10002 127.0.0.1 10003 
+Oct 06 15:18:58.254 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R1 4 0 udp-21f6a323-9ed3-411d-b37f-86c110ccc78b 
+Oct 06 15:18:58.255 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:58.347 HYPERVISOR: exec_cmd: nio create_udp udp-f89d8144-14e2-4bb1-95ab-14dc3f94ea33 10006 127.0.0.1 10007 
+Oct 06 15:18:58.384 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R1 4 1 udp-f89d8144-14e2-4bb1-95ab-14dc3f94ea33 
+Oct 06 15:18:58.385 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:18:59.749 HYPERVISOR: exec_cmd: nio create_udp udp-8e65b454-05c1-468e-83ed-adcbd8e8b892 10018 127.0.0.1 10019 
+Oct 06 15:18:59.755 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R1 0 0 udp-8e65b454-05c1-468e-83ed-adcbd8e8b892 
+Oct 06 15:18:59.756 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:23:38.371 HYPERVISOR: exec_cmd: vm create Ghost 0 c7200 
+Oct 06 15:23:38.375 VM: VM Ghost created.
+Oct 06 15:23:38.408 HYPERVISOR: exec_cmd: vm set_ios Ghost C:/Users/xXRom/GNS3/images/IOS/c7200-advipservicesk9-mz.124-4.t1.image 
+Oct 06 15:23:38.409 HYPERVISOR: exec_cmd: vm set_ghost_status Ghost 1 
+Oct 06 15:23:38.409 HYPERVISOR: exec_cmd: vm set_ghost_file Ghost C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\c7200-advipservicesk9-mz.124-4.t1.image-512.ghost 
+Oct 06 15:23:38.411 HYPERVISOR: exec_cmd: vm set_ram Ghost 512 
+Oct 06 15:23:38.411 HYPERVISOR: exec_cmd: vm get_status Ghost 
+Oct 06 15:23:38.412 HYPERVISOR: exec_cmd: vm set_config Ghost configs\i0_startup-config.cfg 
+Oct 06 15:23:38.412 HYPERVISOR: exec_cmd: vm start Ghost 
+Oct 06 15:23:38.868 HYPERVISOR: exec_cmd: vm get_status Ghost 
+Oct 06 15:23:38.872 HYPERVISOR: exec_cmd: vm stop Ghost 
+Oct 06 15:23:39.114 VM: VM Ghost shutdown.
+Oct 06 15:23:39.116 HYPERVISOR: exec_cmd: vm extract_config Ghost 
+Oct 06 15:23:39.119 HYPERVISOR: exec_cmd: vm clean_delete Ghost 
+Oct 06 15:23:39.119 VM: VM Ghost destroyed.
+Oct 06 15:23:39.145 HYPERVISOR: exec_cmd: vm set_ghost_status R1 2 
+Oct 06 15:23:39.146 HYPERVISOR: exec_cmd: vm set_ghost_file R1 C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\c7200-advipservicesk9-mz.124-4.t1.image-512.ghost 
+Oct 06 15:23:39.146 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:23:39.149 HYPERVISOR: exec_cmd: vm set_config R1 configs\i1_startup-config.cfg 
+Oct 06 15:23:39.149 HYPERVISOR: exec_cmd: vm start R1 
+Oct 06 15:24:09.457 HYPERVISOR: exec_cmd: vm extract_config R1 
+Oct 06 15:26:39.499 HYPERVISOR: exec_cmd: vm extract_config R1 
+Oct 06 15:27:37.404 HYPERVISOR: exec_cmd: nio create_udp udp-a0a444f2-dbf5-4a36-9fe7-c47ffed2e09f 10040 127.0.0.1 10041 
+Oct 06 15:27:37.410 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R1 6 0 udp-a0a444f2-dbf5-4a36-9fe7-c47ffed2e09f 
+Oct 06 15:27:37.411 HYPERVISOR: exec_cmd: vm get_status R1 
+Oct 06 15:27:37.411 HYPERVISOR: exec_cmd: vm slot_enable_nio R1 6 0 
