@@ -1,0 +1,50 @@
+Oct 06 15:18:56.104 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Oct 06 15:18:56.108 HYPERVISOR: Started on IP = localhost, TCP port = 52776.
+Oct 06 15:18:56.537 HYPERVISOR: exec_cmd: hypervisor version 
+Oct 06 15:18:56.539 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips 
+Oct 06 15:18:56.539 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips
+Oct 06 15:18:56.539 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\27a1021f-361d-48e1-975e-896846e84bae 
+Oct 06 15:18:56.540 GENERAL: working_dir=C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\27a1021f-361d-48e1-975e-896846e84bae
+Oct 06 15:18:56.540 HYPERVISOR: exec_cmd: vm create R4 4 c7200 
+Oct 06 15:18:56.545 VM: VM R4 created.
+Oct 06 15:18:56.545 HYPERVISOR: exec_cmd: vm set_con_tcp_port R4 5007 
+Oct 06 15:18:56.545 HYPERVISOR: exec_cmd: c7200 get_mac_addr R4 
+Oct 06 15:18:56.547 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.547 HYPERVISOR: exec_cmd: vm slot_add_binding R4 0 0 C7200-IO-FE 
+Oct 06 15:18:56.547 HYPERVISOR: exec_cmd: vm set_disk0 R4 0 
+Oct 06 15:18:56.547 HYPERVISOR: exec_cmd: vm set_exec_area R4 64 
+Oct 06 15:18:56.549 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.549 HYPERVISOR: exec_cmd: vm set_idle_pc R4 0x60270810 
+Oct 06 15:18:56.551 HYPERVISOR: exec_cmd: vm set_ios R4 C:/Users/xXRom/GNS3/images/IOS/c7200-advipservicesk9-mz.124-4.t1.image 
+Oct 06 15:18:56.551 HYPERVISOR: exec_cmd: c7200 set_mac_addr R4 ca04.0e18.0000 
+Oct 06 15:18:56.552 HYPERVISOR: exec_cmd: vm set_nvram R4 512 
+Oct 06 15:18:56.554 HYPERVISOR: exec_cmd: vm set_ram R4 512 
+Oct 06 15:18:56.555 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.555 HYPERVISOR: exec_cmd: vm slot_remove_binding R4 0 0 
+Oct 06 15:18:56.555 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.555 HYPERVISOR: exec_cmd: vm slot_add_binding R4 0 0 C7200-IO-GE-E 
+Oct 06 15:18:56.555 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.557 HYPERVISOR: exec_cmd: vm slot_add_binding R4 1 0 PA-GE 
+Oct 06 15:18:56.557 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.557 HYPERVISOR: exec_cmd: vm slot_add_binding R4 2 0 PA-GE 
+Oct 06 15:18:56.557 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.557 HYPERVISOR: exec_cmd: vm slot_add_binding R4 3 0 PA-GE 
+Oct 06 15:18:56.558 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.558 HYPERVISOR: exec_cmd: vm slot_add_binding R4 4 0 PA-2FE-TX 
+Oct 06 15:18:56.558 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.558 HYPERVISOR: exec_cmd: vm slot_add_binding R4 5 0 PA-2FE-TX 
+Oct 06 15:18:56.559 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:18:56.559 HYPERVISOR: exec_cmd: vm slot_add_binding R4 6 0 PA-4T+ 
+Oct 06 15:18:59.767 HYPERVISOR: exec_cmd: nio create_udp udp-a522dfbc-a470-487b-a91a-74e8f19886e1 10020 127.0.0.1 10021 
+Oct 06 15:19:00.661 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R4 0 0 udp-a522dfbc-a470-487b-a91a-74e8f19886e1 
+Oct 06 15:19:00.661 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:19:00.751 HYPERVISOR: exec_cmd: nio create_udp udp-d8930805-d571-4c2f-b2c7-7480717f6185 10024 127.0.0.1 10025 
+Oct 06 15:19:00.790 HYPERVISOR: exec_cmd: vm slot_add_nio_binding R4 1 0 udp-d8930805-d571-4c2f-b2c7-7480717f6185 
+Oct 06 15:19:00.791 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:23:39.697 HYPERVISOR: exec_cmd: vm set_ghost_status R4 2 
+Oct 06 15:23:39.698 HYPERVISOR: exec_cmd: vm set_ghost_file R4 C:\Users\xXRom\Documents\E2\Introduction to networks Partie 2 CCNA1\test jour 1\project-files\dynamips\c7200-advipservicesk9-mz.124-4.t1.image-512.ghost 
+Oct 06 15:23:39.698 HYPERVISOR: exec_cmd: vm get_status R4 
+Oct 06 15:23:39.700 HYPERVISOR: exec_cmd: vm set_config R4 configs\i4_startup-config.cfg 
+Oct 06 15:23:39.700 HYPERVISOR: exec_cmd: vm start R4 
+Oct 06 15:24:10.019 HYPERVISOR: exec_cmd: vm extract_config R4 
+Oct 06 15:28:40.107 HYPERVISOR: exec_cmd: vm extract_config R4 

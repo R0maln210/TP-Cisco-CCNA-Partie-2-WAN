@@ -1,0 +1,510 @@
+## Étape 1 : 
+
+### R1 :
+
+```
+en
+conf t
+
+interface Loopback100
+description Bloc public Siege 100.64.2.0/26
+ip add 100.64.2.1 255.255.255.192
+exit 
+
+do wr
+```
+
+### R2 : 
+
+```
+en
+conf t
+
+router eigrp 100
+passive-interface g0/0
+exit
+
+ip route 0.0.0.0 0.0.0.0 dhcp
+
+do wr
+```
+
+### R4 : 
+
+```
+en
+conf t
+
+interface Loopback100
+description Bloc public Agence 100.64.2.64/26
+ip add 100.64.2.65 255.255.255.192
+exit
+
+do wr
+```
+
+## Commandes pour la vérification de l'étape 1 : 
+
+### show ip eigrp Neighbors
+Sur R2
+
+### show ip route 100.64.2.64
+Sur R1
+
+### show ip route 0.0.0.0
+Sur R2
+
+
+## Étape 2 :
+
+### R1 :
+
+```
+conf t
+router bgp 65002
+bgp router-id 10.2.255.1
+bgp log-neighbor-changes
+neighbor 10.2.255.5 remote-as 65002
+neighbor 10.2.255.5 update-source Loopback0
+network 100.64.2.0 mask 255.255.255.192
+exit
+do wr
+```
+
+### R2 : 
+
+```
+conf t
+router bgp 65002
+bgp router-id 10.2.255.2
+bgp log-neighbor-changes
+neighbor 10.2.255.5 remote-as 65002
+neighbor 10.2.255.5 update-source Loopback0
+exit
+do wr
+```
+
+### R3 : 
+
+```
+conf t
+router bgp 65002
+bgp router-id 10.2.255.3
+bgp log-neighbor-changes
+neighbor 10.2.255.5 remote-as 65002
+neighbor 10.2.255.5 update-source Loopback0
+exit
+do wr
+```
+
+### R4 : 
+
+```
+conf t
+router bgp 65002
+bgp router-id 10.2.255.4
+bgp log-neighbor-changes
+neighbor 10.2.255.5 remote-as 65002
+neighbor 10.2.255.5 update-source Loopback0
+network 100.64.2.64 mask 255.255.255.192
+exit
+do wr
+```
+
+### R5 : 
+
+```
+conf t
+router bgp 65002
+bgp router-id 10.2.255.5
+bgp log-neighbor-changes
+neighbor IBGP-RR peer-group
+neighbor IBGP-RR remote-as 65002
+neighbor IBGP-RR update-source Loopback0
+neighbor IBGP-RR route-reflector-client
+neighbor IBGP-RR next-hop-self
+neighbor 10.2.255.1 peer-group IBGP-RR
+neighbor 10.2.255.2 peer-group IBGP-RR
+neighbor 10.2.255.3 peer-group IBGP-RR
+neighbor 10.2.255.4 peer-group IBGP-RR
+exit
+do wr
+```
+
+## Commandes pour la vérification de l'étape 2 : 
+
+### show ip bgp summary
+Sur R2
+
+### show ip route bgp
+Sur R2
+
+### show ip bgp 100.64.2.64
+Sur R1
+
+### showip route bgp
+Sur R1
+
+### ping 100.64.2.65 source Loopback100
+Sur R1
+
+### traceroute 100.64.2.65 source Loopback100
+Sur R1
+
+
+## Étape 3 : 
+
+### R2 :
+
+```
+conf t
+
+interface GigabitEthernet1/0
+description Lien vers Partenaire R22
+ip address 10.40.10.2 255.255.255.0
+no shutdown
+exit
+
+ip prefix-list PL-OUT-EBGP seq 5 permit 100.64.2.0/24
+
+ip prefix-list PL-IN-EBGP seq 5 deny 100.64.2.0/24 le 32
+ip prefix-list PL-IN-EBGP seq 10 permit 100.64.0.0/10 ge 24 le 24
+
+router bgp 65002
+aggregate-address 100.64.2.0 255.255.255.0
+neighbor 10.40.10.22 remote-as 65022
+neighbor 10.40.10.22 description eBGP vers Entreprise 22
+neighbor 10.40.10.22 password BGP-2-22
+neighbor 10.40.10.22 ttl-security hops 1
+neighbor 10.40.10.22 prefix-list PL-IN-EBGP in
+neighbor 10.40.10.22 prefix-list PL-OUT-EBGP out
+neighbor 10.40.10.22 maximum-prefix 20 80
+neighbor 10.40.10.22 soft-reconfiguration inbound
+exit
+
+do wr
+```
+
+### Simulation d'un routeur entreprise externe R22 :
+
+```
+en
+conf t
+hostname R22
+
+interface GigabitEthernet0/0
+description Lien vers Enterprise 2 (R2)
+ip address 10.40.10.22 255.255.255.0
+no shutdown
+exit
+
+interface Loopback100
+description Siege Entreprise 22
+ip address 100.64.22.1 255.255.255.192
+exit
+
+ip prefix-list PL-OUT-EBGP seq 5 permit 100.64.22.0/24
+ip prefix-list PL-IN-EBGP seq 5 deny 100.64.22.0/24 le 32
+ip prefix-list PL-IN-EBGP seq 10 permit 100.64.0.0/10 ge 24 le 24
+
+router bgp 65022
+bgp router-id 10.22.255.1
+aggregate-address 100.64.22.0 255.255.255.0
+neighbor 10.40.10.2 remote-as 65002
+neighbor 10.40.10.2 description eBGP vers Entreprise 2 (R2)
+neighbor 10.40.10.2 password BGP-2-22
+neighbor 10.40.10.2 ttl-security hops 1
+neighbor 10.40.10.2 prefix-list PL-IN-EBGP in
+neighbor 10.40.10.2 prefix-list PL-OUT-EBGP out
+neighbor 10.40.10.2 maximum-prefix 20 80
+neighbor 10.40.10.2 soft-reconfiguration inbound
+
+network 100.64.22.0 mask 255.255.255.0
+exit
+
+ip route 100.64.22.0 255.255.255.0 Null0
+
+do wr
+```
+
+## Commandes pour la vérification de l'étape 3 : 
+
+### show ip bgp summary
+Sur R2
+
+### show ip bgp Neighbors 10.40.10.22 advertised-routes
+Sur R2
+
+### show ip bgp Neighbors 10.40.10.22 received-routes
+Sur R2
+
+### show ip bgp Neighbors 10.40.10.22 routes
+Sur R2
+
+### show ip route 100.64.22.0
+Sur R1
+
+### clear ip bgp 10.40.10.22
+Sur R2 après avoir enlevé le mot de passe sur R22 --> 
+```
+conf t
+router bgp 65022
+no neighbor 10.40.10.2 password BGP-2-22
+do wr
+```
+
+### show ip bgp neighbors 10.40.10.22 | include External|Hops|TTL
+Sur R2
+
+
+## Étapes 4 : 
+
+### R2 : 
+
+```
+conf t
+
+interface g1/0
+bfd interval 300 min_rx 300 multiplier 3
+no bfd echo
+exit
+
+router bgp 65002
+neighbor 10.40.10.22 fall-over bfd
+exit
+
+do wr
+```
+
+### R22 : 
+
+```
+conf t
+
+interface g0/0
+bfd interval 300 min_rx 300 multiplier 3
+no bfd echo
+exit
+
+router bgp 65022
+neighbor 10.40.10.2 fall-over bfd
+exit
+
+do wr
+```
+
+Ces commandes ne passent pas sur cette version du routeur mais le BFD est quand même actif et opérationnel pour BGP
+
+## Commandes pour la vérification de l'étape 4 : 
+
+### show ip bgp neighbors 10.40.10.22 | include BFD|fall-over
+Sur R2
+
+
+## Étape 5 : 
+
+### R2 : 
+
+```
+conf t
+
+interface g2/0
+ip add 10.50.10.2 255.255.255.0
+no shutdown
+exit
+
+ip as-path access-list 1 permit ^$
+
+router bgp 65002
+neighbor 10.50.10.33 remote-as 65033
+neighbor 10.50.10.33 description eBGP vers Partenaire Q (R33)
+neighbor 10.50.10.33 password CISCO
+neighbor 10.50.10.33 ttl-security hops 1
+neighbor 10.50.10.33 prefix-list PL-OUT-EBGP out
+neighbor 10.50.10.33 filter-list 1 out
+exit
+
+do wr
+```
+
+### R33 : 
+
+```
+en
+conf t
+hostname R33
+
+interface g0/0
+ip add 10.50.10.33 255.255.255.0
+no shutdown
+exit
+
+router bgp 65033
+bgp router-id 10.33.255.33
+neighbor 10.50.10.2 remote-as 65002
+neighbor 10.50.10.2 password CISCO
+neighbor 10.50.10.2 ttl-security hops 1
+exit
+
+do wr
+```
+
+## Commandes pour la vérification de l'étape 5 :
+
+### show ip bgp 100.64.2.0
+Sur R22
+
+### show ip bgp 100.64.2.0
+Sur R22
+
+### show ip bgp Neighbors 10.50.10.33 advertised-routes
+Sur R2
+
+
+## Étape 6 : 
+
+R2 : 
+
+```
+conf t
+ip prefix-list PL-OUT-TRANSIT seq 5 permit 100.64.0.0/10 ge 24 le 24
+
+router bgp 65002
+no neighbor 10.40.10.22 filter-list 1 out
+no neighbor 10.40.10.33 filter-list 1 out
+neighbor 10.40.10.22 prefix-list PL-OUT-TRANSIT out
+neighbor 10.50.10.33 prefix-list PL-OUT-TRANSIT out
+exit
+
+route-map RM-IN-P permit 10
+set local-preference 200
+
+router bgp 65002
+neighbor 10.40.10.22 route-map RM-IN-P in
+exit
+
+route-map RM-OUT-Q permit 10
+set as-path prepend 65002 65002 65002
+
+router bgp 65002
+neighbor 10.50.10.33 route-map RM-OUT-Q out
+exit
+
+route-map RM-OUT-P permit 10
+set community no-export
+exit
+
+router bgp 65002
+neighbor 10.40.10.22 send-community
+neighbor 10.40.10.22 route-map RM-OUT-P out
+exit
+
+end
+clear ip bgp 10.50.10.33 soft out
+clear ip bgp 10.40.10.22 soft in
+clear ip bgp 10.40.10.22 soft out
+wr
+```
+
+## Commandes pour la vérification de l'étape 6 :
+
+### show ip bgp
+Sur R2
+
+### show ip bgp 100.64.22.0
+Sur R1
+
+### show ip bgp 100.64.2.0
+Sur R22 et R33
+
+
+## Défis
+
+### Défis redondance du Route Reflector
+
+#### R1 :
+
+```
+conf t
+router bgp 65002
+bgp cluster-id 10.2.255.250
+end
+wr
+```
+
+#### R5 : 
+
+```
+conf t
+router bgp 65002
+bgp cluster-id 10.2.255.250
+
+interface Loopback0
+shutdown
+end
+wr
+```
+
+### Vérification défis Route Reflector :
+
+#### show ip bgp
+Sur R4
+
+### Défis Communities
+
+#### R1 :
+
+```
+conf t
+route-map RM-MARK-SIEGE permit 10
+set community 65002:100
+
+router bgp 65002
+neighbor 10.2.255.5 send-community
+neighbor 10.2.255.5 route-map RM-MARK-SIEGE out
+
+end
+clear ip bgp 10.2.255.5 soft out
+wr
+```
+
+#### R4 : 
+
+```
+conf t
+route-map RM-MARK-AGENCE permit 10
+set community 65002:200
+
+router bgp 65002
+neighbor 10.2.255.5 send-community
+neighbor 10.2.255.5 route-map RM-MARK-AGENCE out
+
+end
+clear ip bgp 10.2.255.5 soft out
+wr
+```
+
+#### R5 : 
+
+```
+conf t
+ip community-list standard LIST-SIEGE permit 65002:100
+
+route-map RM-ADV permit 10
+match community LIST-SIEGE
+
+router bgp 65002
+aggregate-address 100.64.0.0 255.255.0.0 summary-only advertise-map RM-ADV
+
+end
+clear ip bgp 10.40.10.22 soft out
+wr
+```
+
+### Vérification défis Communities :
+
+show ip bgp Neighbors 10.40.10.22 advertised-routes
+Sur R5 avant la coupure (R1)
+
+show ip bgp Neighbors 10.40.10.22 advertised-routes
+Sur R5 après la coupure (R1)
