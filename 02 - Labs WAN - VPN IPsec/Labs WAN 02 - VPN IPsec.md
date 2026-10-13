@@ -394,3 +394,48 @@ Sur R5
 #### ping et shutdown sur le tunnel
 SurR5
 ![07 - ping et shutdown sur le tunnel](https://hackmd.io/_uploads/BJl9ysisfg.png)
+
+## Questions d'analyse
+
+### 1) Pourquoi une SA IPsec est-elle unidirectionnelle ? Combien de SA existent pour un tunnel IKEv2 actif ?
+
+Une SA IPsec porte un seul jeu de clés, un SPI et un compteur anti-rejeu pour un seul sens de circulation. Chaque sens a donc ses propres clés et son propre numéro de séquence, ce qui évite de partager un compteur entre deux émetteurs. Un tunnel IKEv2 actif compte 1 IKE SA (le canal de contrôle) et 2 IPsec SA (une par sens). Ton capture le montre : deux SPI différents (0x153304a1 et 0x36894bd1).
+
+### 2) Quelle est la différence entre phase 1 et phase 2 ? Que protège chacune ?
+
+- Phase 1 (IKE SA) : les routeurs s’authentifient (PSK) et créent un canal sécurisé par Diffie-Hellman (groupe 14). Elle protège les échanges de négociation entre les routeurs, pas les données.
+
+- Phase 2 (IPsec SA) : dans ce canal, ils négocient les SA ESP (AES-256, SHA-256). Elle protège le trafic utilisateur (les paquets des PC).
+- 
+En IKEv2, les deux étapes sont fusionnées : IKE_SA_INIT + IKE_AUTH créent à la fois l’IKE SA et la première IPsec SA.
+
+### 3) Pourquoi le premier ping de la partie A perd-il des paquets ?
+
+Le tunnel n’existe pas avant le premier paquet « intéressant » (qui correspond à la crypto ACL). Ce paquet déclenche la négociation IKE (phase 1 puis phase 2), qui prend quelques secondes. Pendant ce temps, les premiers paquets sont jetés ou expirent (timeout de 2 s). Une fois les SA créées, les pings suivants passent.
+
+### 4) Dans la partie A, pourquoi faut-il une route hôte vers le pair ? Que se passerait-il sans elle ?
+
+Elle force le trafic IKE/ESP vers le pair à sortir par l’interface qui porte la crypto map. Sans elle, EIGRP aurait appris le chemin vers le pair par un autre lien (R2/R3 dans le sujet), qui n’a pas de crypto map : les paquets IPsec ne seraient pas générés sur la bonne interface, le tunnel ne monterait pas ou le trafic partirait en clair.
+
+### 5) Donne 3 avantages du VTI sur la crypto map pour une entreprise de 50 agences.
+
+- Routage dynamique (EIGRP/OSPF/BGP) dans le tunnel : une nouvelle agence ou un nouveau réseau s’annonce par le protocole, sans toucher à IPsec. Avec une crypto map, il faut modifier les ACL des deux côtés à chaque ajout, et les garder en miroir.
+
+- Configuration plus simple et évolutive : un profil IPsec réutilisable et une interface Tunnel par agence, au lieu d’ACL qui grossissent et d’une crypto map unique difficile à maintenir.
+
+- Supervision et QoS : une interface par tunnel, avec compteurs, état up/down, et possibilité d’appliquer QoS, ACL ou redondance (double tunnel avec bascule rapide). La crypto map n’offre rien de tel.
+
+### 6) Explique le rôle du PFS et du DPD.
+
+- PFS : à chaque renouvellement d’une IPsec SA, un nouvel échange Diffie-Hellman génère des clés indépendantes des précédentes. Si une clé est compromise, les trafics passés et futurs restent protégés.
+
+- DPD (Dead Peer Detection) : envoi périodique de tests (ici toutes les 10 s, 3 essais) pour détecter qu’un pair est mort. Les SA devenues inutiles sont supprimées et le tunnel peut être renégocié ou basculé sur un chemin de secours, au lieu de rester un « trou noir ».
+
+### 7) Pourquoi la route statique de la partie C l'emporte-t-elle sur la route BGP ? Quel risque cela crée-t-il (question C.6) ?
+
+Le routeur choisit la route ayant la distance administrative la plus basse : statique = 1, eBGP = 20. La statique via Tunnel20 l’emporte donc, et le trafic B2B passe dans le tunnel même si BGP annonce aussi le préfixe.
+Le risque : si le tunnel tombe, la statique disparaît (interface down) et la route BGP, en clair, prend le relais. Le trafic continue de passer sans chiffrement, et personne ne le remarque puisque les pings répondent toujours. Parade : route statique vers Null0 avec une distance inférieure à celle de la route de secours, ou filtre BGP entrant sur le préfixe du partenaire. Chez toi, sans route de secours, le comportement était fail-closed (0/20 tunnel coupé).
+
+### 8) Pourquoi faut-il réduire le MSS TCP dans un tunnel IPsec ?
+
+IPsec ajoute un surcoût à chaque paquet : nouvel en-tête IP, en-tête ESP, IV, bourrage et authentification (environ 60 à 73 octets). Un paquet TCP de 1500 octets dépasse alors le MTU du lien une fois encapsulé et doit être fragmenté, ou il est jeté si le bit DF est positionné (et si le PMTUD est bloqué, le transfert se fige alors que le ping passe). Avec ip tcp adjust-mss 1360, le routeur réduit le MSS annoncé dans les SYN TCP, de sorte que les hôtes envoient des segments assez petits pour tenir dans le tunnel sans fragmentation, en accord avec ip mtu 1400.
