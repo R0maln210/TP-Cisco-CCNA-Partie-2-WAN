@@ -1,0 +1,254 @@
+Étape 0 : 
+
+R5 : 
+
+conf t
+
+interface Loopback50
+ip add 10.2.50.1 255.255.255.0
+no shutdown
+
+end
+wr
+
+
+Étape 1 : 
+
+R1 : 
+
+conf t
+
+interface Tunnel100
+ip add 10.2.20.1 255.255.255.0
+no ip redirects
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source Loopback0
+tunnel mode gre multipoint
+tunnel key 100
+ip nhrp network-id 100
+ip nhrp authentication dmvpnN
+ip nhrp map multicast dynamic
+no ip split-horizon eigrp 200
+
+exit
+
+router eigrp 200
+network 10.2.20.0 0.0.0.255
+network 100.64.2.0 0.0.0.63
+network 192.168.20.0 0.0.0.255
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+conf t
+interface Tunnel100
+ip address 10.2.20.3 255.255.255.0
+no ip redirects
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source Loopback0
+tunnel destination 10.2.255.1
+tunnel mode gre point-to-point
+tunnel key 100
+ip nhrp network-id 100
+ip nhrp authentication dmvpnN
+ip nhrp map 10.2.20.1 10.2.255.1
+ip nhrp map multicast 10.2.255.1
+ip nhrp nhs 10.2.20.1
+exit
+
+router eigrp 200
+network 10.2.20.0 0.0.0.255
+network 192.168.27.0 0.0.0.255
+network 100.64.2.0 0.0.0.63
+
+end
+wr
+
+
+R5 :
+
+conf t
+
+interface Tunnel100
+ip address 10.2.20.5 255.255.255.0
+no ip redirects
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source Loopback0
+tunnel destination 10.2.255.1
+tunnel mode gre point-to-point
+tunnel key 100
+ip nhrp network-id 100
+ip nhrp authentication dmvpnN
+ip nhrp map 10.2.20.1 10.2.255.1
+ip nhrp map multicast 10.2.255.1
+ip nhrp nhs 10.2.20.1
+exit
+
+router eigrp 200
+network 10.2.20.0 0.0.0.255
+network 10.2.50.0 0.0.0.255
+network 100.64.2.0 0.0.0.63
+
+end
+wr
+
+
+
+Étape 2 : 
+
+R1 : 
+
+conf t
+
+interface Tunnel100
+no ip next-hop-self eigrp 200
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+interface Tunnel100
+no tunnel destination
+tunnel mode gre multipoint
+
+end
+wr
+
+
+R5 : 
+
+conf t
+
+interface Tunnel100
+no tunnel destination
+tunnel mode gre multipoint
+
+end
+wr
+
+
+
+
+Étape 3 : 
+
+R1 : 
+
+conf t
+
+ip cef
+
+interface Tunnel100
+no tunnel mode gre point-to-point
+tunnel mode gre multipoint
+ip nhrp redirect
+ip next-hop-self eigrp 200
+ip summary-address eigrp 200 192.168.0.0 255.255.248.0
+no ip split-horizon eigrp 200
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+interface Tunnel100
+ip nhrp shortcut
+
+end
+wr
+
+
+R5 : 
+
+conf t
+
+interface Tunnel100
+ip nhrp shortcut
+exit
+
+rouuter eigrp 200
+network 10.2.50.0 0.0.0.255
+
+end
+wr
+
+
+
+
+Étape 4 :
+
+R1 : 
+
+conf t
+crypto isakmp policy 10
+ encryption aes 256
+ hash sha256
+ authentication pre-share
+ group 14
+exit
+crypto isakmp key Cisco123DMVPN address 0.0.0.0 0.0.0.0
+crypto ipsec transform-set TS-DMVPN esp-aes 256 esp-sha256-hmac
+ mode transport
+exit
+crypto ipsec profile IPSEC-PROF-DMVPN
+ set transform-set TS-DMVPN
+exit
+interface Tunnel100
+ tunnel protection ipsec profile IPSEC-PROF-DMVPN
+end
+
+
+R3 : 
+
+conf t
+crypto isakmp policy 10
+ encryption aes 256
+ hash sha256
+ authentication pre-share
+ group 14
+exit
+crypto isakmp key Cisco123DMVPN address 0.0.0.0 0.0.0.0
+crypto ipsec transform-set TS-DMVPN esp-aes 256 esp-sha256-hmac
+ mode transport
+exit
+crypto ipsec profile IPSEC-PROF-DMVPN
+ set transform-set TS-DMVPN
+exit
+interface Tunnel100
+ tunnel protection ipsec profile IPSEC-PROF-DMVPN
+end
+
+
+R5 : 
+
+conf t
+crypto isakmp policy 10
+ encryption aes 256
+ hash sha256
+ authentication pre-share
+ group 14
+exit
+crypto isakmp key Cisco123DMVPN address 0.0.0.0 0.0.0.0
+crypto ipsec transform-set TS-DMVPN esp-aes 256 esp-sha256-hmac
+ mode transport
+exit
+crypto ipsec profile IPSEC-PROF-DMVPN
+ set transform-set TS-DMVPN
+exit
+interface Tunnel100
+ tunnel protection ipsec profile IPSEC-PROF-DMVPN
+end
