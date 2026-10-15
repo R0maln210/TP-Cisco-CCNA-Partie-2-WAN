@@ -7,6 +7,7 @@ title: Labs WAN 00 - Cadre commun
 
 ## Lab complet : 
 
+Le lab est adapté à ma configuration initiale avant les TP et les adresses IP aussi
 
 ![01 - lab complet](https://hackmd.io/_uploads/HyNrv7cifx.png)
 
