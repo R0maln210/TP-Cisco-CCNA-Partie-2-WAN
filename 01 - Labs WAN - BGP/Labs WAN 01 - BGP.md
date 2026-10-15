@@ -7,6 +7,8 @@ title: Labs WAN 01 - BGP
 
 ## Lab complet : 
 
+Le lab est adapté à ma configuration initiale avant les TP et les adresses IP aussi
+
 ![lab complet](https://hackmd.io/_uploads/Skz9bX9jMg.png)
 
 ## Étape 1 : 
