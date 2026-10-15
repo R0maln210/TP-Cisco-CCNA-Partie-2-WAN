@@ -7,6 +7,8 @@ title: Labs WAN 02 - VPN IPsec
 
 ## Lab complet : 
 
+Le lab est adapté à ma configuration initiale avant les TP et les adresses IP aussi
+
 ![lab complet](https://hackmd.io/_uploads/H14uC_oiMg.png)
 
 ## Étape 0 : preuve de l'isolement
