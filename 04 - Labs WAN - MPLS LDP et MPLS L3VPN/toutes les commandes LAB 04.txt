@@ -1,0 +1,248 @@
+Étape 1 : 
+
+R1 : 
+
+conf t
+
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+interface fa4/1
+mpls ip
+
+interface S6/0
+mpls ip
+
+interface g3/0
+mpls ip
+
+end
+wr
+
+
+R2 :
+
+conf t
+
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+interface fa4/0
+mpls ip
+
+interface fa4/1
+mpls ip
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+interface fa4/0
+mpls ip
+
+interface s6/0
+mpls ip
+
+interface g2/0
+mpls ip
+
+end
+wr
+
+
+R4 : 
+
+conf t
+
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+interface g3/0
+mpls ip
+
+interface g1/0
+mpls ip
+
+end
+wr
+
+
+R5 : 
+
+conf t
+
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+interface g1/0
+mpls ip
+
+interface g2/0
+mpls ip
+
+end
+wr
+
+
+
+Étape 2 : 
+
+R1 : 
+
+conf t
+
+ip vrf CLIENT-A
+rd 65100:1
+route-target export 65100:1
+route-target import 65100:1
+
+ip vrf CLIENT-B
+rd 65100:2
+route-target export 65100:2
+route-target import 65100:2
+
+interface fa4/0
+description LAN PC1 - Client A
+no ip add
+ip vrf forwarding CLIENT-A
+ip add 192.168.20.254 255.255.255.0
+no sh
+
+interface Loopback202
+ip vrf forwarding CLIENT-B
+ip add 192.168.0.1 255.255.255.0
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+ip vrf CLIENT-A
+rd 65NNN:1
+route-target export 65NNN:1
+route-target import 65NNN:1
+
+ip vrf CLIENT-B
+rd 65NNN:2
+route-target export 65NNN:2
+route-target import 65NNN:2
+
+interface fa4/1
+description LAN PC2 - Client A
+no ip add
+ip vrf forwarding CLIENT-A
+ip add 192.168.27.254 255.255.255.0
+no sh
+
+end
+wr
+
+
+
+Étape 3 : 
+
+R1 : 
+
+
+conf t
+
+router bgp 65100
+neighbor 10.2.255.3 remote-as 65100
+neighbor 10.2.255.3 update-source Loopback0
+address-family vpnv4
+neighbor 10.2.255.3 activate
+neighbor 10.2.255.3 send-community extended
+exit-address-family
+
+address-family ipv4 vrf CLIENT-A
+redistribute connected
+exit-address-family
+ 
+address-family ipv4 vrf CLIENT-B
+redistribute connected
+exit-address-family
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+router bgp 65100
+neighbor 10.2.255.1 remote-as 65100
+neighbor 10.2.255.1 update-source Loopback0
+address-family vpnv4
+neighbor 10.2.255.1 activate
+neighbor 10.2.255.1 send-community extended
+exit-address-family
+ 
+address-family ipv4 vrf CLIENT-A
+redistribute connected
+exit-address-family
+ 
+address-family ipv4 vrf CLIENT-B
+redistribute connected
+exit-address-family
+
+end
+wr
+
+
+Étape 5 : 
+
+R1 : 
+
+conf t
+
+ip vrf SERVICES
+rd 65100:99
+route-target export 65100:99
+route-target import 65100:1
+route-target import 65100:2
+
+ip vrf CLIENT-A
+route-target import 65100:99
+ip vrf CLIENT-B
+route-target import 65100:99
+
+interface Loopback203
+ip vrf forwarding SERVICES
+ip address 10.2.203.53 255.255.255.255
+
+router bgp 65100
+address-family ipv4 vrf SERVICES
+redistribute connected
+exit-address-family
+
+ip vrf SERVICES
+no route-target import 65100:2
+
+end
+clear ip bgp vpnv4 unicast * soft
+
+wr
+
+
+R3 : 
+
+conf t
+
+ip vrf CLIENT-A
+route-target import 65100:99
+ip vrf CLIENT-B
+route-target import 65100:99
+
+end
+wr
