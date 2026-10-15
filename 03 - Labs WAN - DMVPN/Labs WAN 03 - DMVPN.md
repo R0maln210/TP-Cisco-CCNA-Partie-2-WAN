@@ -7,6 +7,8 @@ title: Labs WAN 03 - DMVPN
 
 ## Lab complet 
 
+Le lab est adapté à ma configuration initiale avant les TP et les adresses IP aussi
+
 ![lab complet](https://hackmd.io/_uploads/rk3YWyaozg.png)
 
 ## Étape 0 : Préparation
