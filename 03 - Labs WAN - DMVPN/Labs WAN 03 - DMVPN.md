@@ -470,7 +470,7 @@ Le mode transport chiffre uniquement la charge utile (payload) et l'en-tête du 
 
 Le DMVPN introduit la dissociation fondamentale entre le plan de contrôle (le routage dynamique centralisé/distribué) et le plan de données (l'établissement dynamique de tunnels à la demande / shortcuts). C'est exactement le principe fondateur du SD-WAN, qui automatise et orchestre dynamiquement les chemins WAN sans configuration statique lourde.
 
-## Rapport d'intervention - TP 03 : DMVPN
+## Rapport d'intervention
 
 ### Objectif
 Déployer un DMVPN avec R1 en hub et R3/R5 en spokes, faire évoluer les phases 1, 2 et 3, puis chiffrer avec IPsec.
