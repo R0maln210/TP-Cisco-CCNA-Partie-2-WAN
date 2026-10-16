@@ -7,6 +7,8 @@ title: Labs WAN 06 - Sd-WAN
 
 ## Lab complet : 
 
+Le lab est adapté à ma configuration initiale avant les TP et les adresses IP aussi
+
 ![lab complet](https://hackmd.io/_uploads/Hkku-OyhMx.png)
 
 ## Étape 0 : 
