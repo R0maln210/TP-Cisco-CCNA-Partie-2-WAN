@@ -1,9 +1,9 @@
 ---
-title: Labs WAN 06 - Sd-WAN
+title: Labs WAN 06 - SD-WAN
 
 ---
 
-# Labs WAN 06 - Sd-WAN
+# Labs WAN 06 - SD-WAN
 
 ## Lab complet : 
 
