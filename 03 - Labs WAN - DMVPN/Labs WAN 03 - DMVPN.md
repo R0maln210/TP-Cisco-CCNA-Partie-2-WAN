@@ -469,3 +469,31 @@ Le mode transport chiffre uniquement la charge utile (payload) et l'en-tête du 
 ### 8) En quoi DMVPN prépare-t-il les concepts du SD-WAN (module 06) ?
 
 Le DMVPN introduit la dissociation fondamentale entre le plan de contrôle (le routage dynamique centralisé/distribué) et le plan de données (l'établissement dynamique de tunnels à la demande / shortcuts). C'est exactement le principe fondateur du SD-WAN, qui automatise et orchestre dynamiquement les chemins WAN sans configuration statique lourde.
+
+## Rapport d'intervention - TP 03 : DMVPN
+
+### Objectif
+Déployer un DMVPN avec R1 en hub et R3/R5 en spokes, faire évoluer les phases 1, 2 et 3, puis chiffrer avec IPsec.
+
+### Intervention réalisée
+- **Étape 0** : Loopback50 sur R5 (10.2.50.0/24), contrôle de l'underlay.
+- **Étape 1 (phase 1)** : hub en `gre multipoint`, spokes en `gre point-to-point`, NHRP (network-id, authentication, map multicast), EIGRP 200, split-horizon désactivé sur le hub.
+- **Étape 2 (phase 2)** : spokes en `gre multipoint`, `no ip next-hop-self eigrp 200` sur le hub.
+- **Étape 3 (phase 3)** : `ip nhrp redirect` et résumé EIGRP sur le hub, `ip nhrp shortcut` sur les spokes.
+- **Étape 4** : IPsec en mode transport (profil `IPSEC-PROF-DMVPN`, `tunnel protection`).
+
+### Vérifications
+- `show dmvpn`, `show ip nhrp`
+- Voisinages EIGRP 200 et tables de routage des spokes
+- Traceroute vers le LAN de l'autre spoke
+- Captures Wireshark
+- `show crypto session`, `show dmvpn detail` (SPI identique à celui de l'ESP capturé)
+
+### Problèmes rencontrés
+- **Phase 3 non validée** : le tunnel direct spoke à spoke ne se forme pas. Le compteur Traffic Indication du hub reste à 0 (aucun NHRP Redirect envoyé) et le traceroute passe toujours par le hub.
+- Le résumé a été adapté à mon adressage (192.168.16.0/20), car le /21 du TP ne couvrait pas mes LAN.
+- Vérifications faites sans anomalie : configuration Tunnel100, CEF, next-hops, `no ip redirects`, redémarrage du hub, reset du tunnel, debug NHRP.
+- Cause non identifiée. Hypothèse la plus probable : limite de l'image émulée (c7200 15.2(4)S7 sous GNS3).
+
+### Conclusion
+Le DMVPN est fonctionnel en phases 1 et 2 : enregistrements NHRP, EIGRP et trafic chiffré en ESP sont validés. La phase 3 est configurée mais le comportement attendu (shortcut) n'a pas pu être démontré. J'ai donc poursuivi avec l'étape 4 en passant par le hub.
