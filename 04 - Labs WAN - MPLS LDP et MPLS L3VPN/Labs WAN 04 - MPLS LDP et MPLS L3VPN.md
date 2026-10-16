@@ -474,3 +474,31 @@ L'opérateur mutualise sa structure physique tout en garantissant l'isolation et
 
 Que montre la question 5.2 sur les extranets avec des adresses qui se chevauchent ?
 Elle démontre la puissance et la flexibilité du modèle L3VPN/VRF : même si deux clients distincts utilisent exactement les mêmes plan d'adressage privé (par exemple 192.168.1.0/24), les VPN et les politiques d'import/export de Route Targets permettent de les faire cohabiter sur le même réseau opérateur sans aucun conflit de routage, et d'autoriser ou restreindre sélectivement les communications inter-clients (extranet).
+
+## Rapport d'intervention - TP 04 : MPLS LDP et MPLS L3VPN
+
+### Objectif
+Transformer le réseau en cœur MPLS (R1 et R3 en PE, R2/R4/R5 en P) et fournir deux VPN clients (CLIENT-A, CLIENT-B), puis un service partagé (extranet).
+
+### Intervention réalisée
+- **Étape 1** : LDP sur toutes les interfaces du cœur, router-id sur Loopback0.
+- **Étape 2** : VRF CLIENT-A et CLIENT-B (RD/RT 65100:1 et 65100:2), rattachement des interfaces clients, Loopback202 dans CLIENT-B.
+- **Étape 3** : MP-BGP vpnv4 entre R1 et R3 (`send-community extended`), `redistribute connected` dans chaque VRF.
+- **Étape 4** : aucune configuration, vérifications de bout en bout (ping, trace, CEF, Wireshark, bascule du chemin LDP).
+- **Étape 5** : VRF SERVICES (RD 65100:99) avec import/export de RT pour partager le service 10.2.203.53 avec les deux clients.
+
+### Vérifications
+- `show mpls interfaces`, `show mpls ldp neighbor`
+- Bindings LDP et `show mpls forwarding-table`
+- Traceroute avec labels
+- `show vrf`, `show ip route vrf`, `show ip cef vrf`
+- `show bgp vpnv4 unicast all` (summary, labels)
+- Captures Wireshark (pile de 2 labels) et test de coupure d'un lien
+
+### Problèmes rencontrés
+Dans l'extranet, les clients A et B utilisent les mêmes adresses : la VRF SERVICES reçoit deux routes par préfixe (distinguées par leur RD) mais n'en garde qu'une, retenue par un critère de départage sans lien avec le client. PC1 n'atteignait pas le DNS (retour vers le client B), alors que PC2 y arrivait.
+
+Correction : suppression de `route-target import 65100:2` dans SERVICES. PC1 et PC2 atteignent alors le DNS, mais le client B n'a plus de route de retour. L'isolation entre A et B reste intacte.
+
+### Conclusion
+Le cœur MPLS transporte les VPN sans BGP sur les routeurs P et l'isolation A/B est respectée. L'extranet fonctionne pour le client A, mais le client B perd sa route de retour : un extranet est incompatible avec des plans d'adressage qui se chevauchent. Il faut des adresses uniques par client, du NAT ou des routes statiques dédiées dans SERVICES.
