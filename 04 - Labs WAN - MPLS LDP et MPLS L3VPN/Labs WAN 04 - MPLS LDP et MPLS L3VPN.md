@@ -475,7 +475,7 @@ L'opérateur mutualise sa structure physique tout en garantissant l'isolation et
 Que montre la question 5.2 sur les extranets avec des adresses qui se chevauchent ?
 Elle démontre la puissance et la flexibilité du modèle L3VPN/VRF : même si deux clients distincts utilisent exactement les mêmes plan d'adressage privé (par exemple 192.168.1.0/24), les VPN et les politiques d'import/export de Route Targets permettent de les faire cohabiter sur le même réseau opérateur sans aucun conflit de routage, et d'autoriser ou restreindre sélectivement les communications inter-clients (extranet).
 
-## Rapport d'intervention - TP 04 : MPLS LDP et MPLS L3VPN
+## Rapport d'intervention
 
 ### Objectif
 Transformer le réseau en cœur MPLS (R1 et R3 en PE, R2/R4/R5 en P) et fournir deux VPN clients (CLIENT-A, CLIENT-B), puis un service partagé (extranet).
