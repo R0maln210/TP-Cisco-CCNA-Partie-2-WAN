@@ -441,3 +441,28 @@ Le risque : si le tunnel tombe, la statique disparaît (interface down) et la ro
 ### 8) Pourquoi faut-il réduire le MSS TCP dans un tunnel IPsec ?
 
 IPsec ajoute un surcoût à chaque paquet : nouvel en-tête IP, en-tête ESP, IV, bourrage et authentification (environ 60 à 73 octets). Un paquet TCP de 1500 octets dépasse alors le MTU du lien une fois encapsulé et doit être fragmenté, ou il est jeté si le bit DF est positionné (et si le PMTUD est bloqué, le transfert se fige alors que le ping passe). Avec ip tcp adjust-mss 1360, le routeur réduit le MSS annoncé dans les SYN TCP, de sorte que les hôtes envoient des segments assez petits pour tenir dans le tunnel sans fragmentation, en accord avec ip mtu 1400.
+
+## Rapport d'intervention - TP 02 : VPN IPsec
+
+### Objectif
+Sécuriser la liaison entre le siège (PC1) et l'agence (PC2) par IPsec, d'abord en crypto map, puis en VTI avec IKEv2, puis en B2B avec un partenaire.
+
+### Intervention réalisée
+- **Étape 0** : preuve de l'isolement (pas de route entre les deux LAN, ping en échec).
+- **Partie A (crypto map, IKEv1)** : ISAKMP AES-256 / SHA-256 / DH14 avec clé pré-partagée, transform-set ESP, crypto ACL en miroir, crypto map sur s6/0, routes hôtes vers le pair.
+- **Partie B (VTI, IKEv2)** : suppression de la crypto map, proposal / policy / keyring / profile IKEv2, profil IPsec, Tunnel10 avec `tunnel protection`, MTU 1400 et MSS 1360, EIGRP 200 dans le tunnel, DPD.
+- **Partie C (B2B)** : tunnel IKEv2 R5 ↔ R4 (Tunnel20, `ip unnumbered Loopback0`), routes statiques vers les blocs du partenaire.
+
+### Vérifications
+- Ping PC1 → PC2
+- `show crypto isakmp sa`, `show crypto ipsec sa`, `show crypto session detail`
+- `show crypto ikev2 sa`, `show crypto ipsec sa interface Tunnel10`
+- Voisinage EIGRP 200 et traceroute
+- Captures Wireshark : ESP visible, ICMP absent en clair
+- Test de coupure du tunnel (comportement fail-closed)
+
+### Problèmes rencontrés
+Perte des premiers paquets du ping en partie A : le premier paquet « intéressant » déclenche la négociation IKE, le temps que le tunnel monte.
+
+### Conclusion
+Les trois variantes fonctionnent et le trafic est chiffré en ESP sur l'underlay. Le VTI est plus évolutif que la crypto map (routage dynamique, une interface par tunnel). Le B2B reste fail-closed en cas de coupure du tunnel, faute de route de secours.
