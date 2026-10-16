@@ -1,0 +1,288 @@
+Étape 1 : 
+
+R1 : 
+
+conf t
+
+ip route 192.168.26.2 255.255.255.255 192.168.24.2
+
+crypto isakmp policy 10
+encryption aes 256
+hash sha256
+authentication pre-share
+group 14
+crypto isakmp key Cisco123! address 192.168.22.2
+crypto isakmp key Cisco123! address 192.168.26.2
+crypto ipsec transform-set TS-SDWAN esp-aes 256 esp-sha256-hmac
+mode transport
+crypto ipsec profile IPSEC-SDWAN
+set transform-set TS-SDWAN
+
+interface Tunnel101
+description TLOC mpls
+bandwidth 10000
+delay 100
+ip address 10.2.101.0 255.255.255.254
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source FastEthernet4/1
+tunnel destination 192.168.22.2
+tunnel protection ipsec profile IPSEC-SDWAN
+interface Tunnel102
+description TLOC biz-internet
+bandwidth 10000
+delay 200
+ip address 10.2.102.0 255.255.255.254
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source GigabitEthernet3/0
+tunnel destination 192.168.26.2
+tunnel protection ipsec profile IPSEC-SDWAN
+
+router eigrp 200
+network 10.2.101.0 0.0.0.1
+network 10.2.102.0 0.0.0.1
+network 192.168.20.0 0.0.0.255
+passive-interface FastEthernet4/0
+no auto-summary
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+ip route 192.168.24.1 255.255.255.255 192.168.26.1
+
+crypto isakmp policy 10
+encryption aes 256
+hash sha256
+authentication pre-share
+group 14
+crypto isakmp key Cisco123! address 192.168.21.1
+crypto isakmp key Cisco123! address 192.168.24.1
+crypto ipsec transform-set TS-SDWAN esp-aes 256 esp-sha256-hmac
+mode transport
+crypto ipsec profile IPSEC-SDWAN
+set transform-set TS-SDWAN
+
+interface Tunnel101
+description TLOC mpls
+bandwidth 10000
+delay 100
+ip address 10.2.101.1 255.255.255.254
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source FastEthernet4/0
+tunnel destination 192.168.21.1
+tunnel protection ipsec profile IPSEC-SDWAN
+interface Tunnel102
+description TLOC biz-internet
+bandwidth 10000
+delay 200
+ip address 10.2.102.1 255.255.255.254
+ip mtu 1400
+ip tcp adjust-mss 1360
+tunnel source GigabitEthernet2/0
+tunnel destination 192.168.24.1
+tunnel protection ipsec profile IPSEC-SDWAN
+
+router eigrp 200
+network 10.2.101.0 0.0.0.1
+network 10.2.102.0 0.0.0.1
+network 192.168.27.0 0.0.0.255
+passive-interface FastEthernet4/1
+no auto-summary
+
+end
+wr
+
+
+Étape 2 : 
+
+R1 : 
+
+conf t
+
+ip sla responder
+
+ip sla 1
+icmp-echo 10.2.101.1 source-interface Tunnel101
+frequency 5
+ip sla schedule 1 life forever start-time now
+ip sla 2
+icmp-echo 10.2.102.1 source-interface Tunnel102
+frequency 5
+ip sla schedule 2 life forever start-time now
+
+ip sla 11
+udp-jitter 10.2.101.1 17011 source-ip 10.2.101.0 num-packets 20 interval 20
+frequency 10
+timeout 1000
+threshold 150
+ip sla schedule 11 life forever start-time now
+ip sla 12
+udp-jitter 10.2.102.1 17012 source-ip 10.2.102.0 num-packets 20 interval 20
+frequency 10
+timeout 1000
+threshold 150
+ip sla schedule 12 life forever start-time now
+
+track 1 ip sla 1 reachability
+delay down 5 up 30
+track 2 ip sla 2 reachability
+delay down 5 up 30
+track 11 ip sla 11 state
+delay down 5 up 30
+track 12 ip sla 12 state
+delay down 5 up 30
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+ip sla responder
+
+end
+wr
+
+
+Étape 3 :
+
+R1 : 
+
+conf t
+ip access-list extended APP-VOIX
+permit udp any any eq 5060
+permit udp any any range 16384 32767
+
+ip access-list extended APP-WEB
+permit tcp any any eq 443
+permit tcp any any eq 22
+
+route-map SDWAN-POLICY permit 10
+description VOIX : mpls puis biz-internet
+match ip address APP-VOIX
+set ip next-hop verify-availability 10.2.101.1 10 track 11
+set ip next-hop verify-availability 10.2.102.1 20 track 12
+
+route-map SDWAN-POLICY permit 20
+description WEB/SSH : biz-internet puis mpls
+match ip address APP-WEB
+set ip next-hop verify-availability 10.2.102.1 10 track 2
+set ip next-hop verify-availability 10.2.101.1 20 track 1
+
+route-map SDWAN-POLICY permit 30
+description Reste : routage normal (EIGRP 200)
+
+interface FastEthernet4/0
+ip policy route-map SDWAN-POLICY
+
+end
+wr
+
+
+R3 : 
+
+conf t
+
+ip sla 1
+icmp-echo 10.2.101.0 source-interface Tunnel101
+frequency 5
+ip sla schedule 1 life forever start-time now
+
+ip sla 2
+icmp-echo 10.2.102.0 source-interface Tunnel102
+frequency 5
+ip sla schedule 2 life forever start-time now
+
+ip sla 11
+udp-jitter 10.2.101.0 17011 source-ip 10.2.101.1 num-packets 20 interval 20
+frequency 10
+timeout 1000
+threshold 150
+ip sla schedule 11 life forever start-time now
+
+ip sla 12
+udp-jitter 10.2.102.0 17012 source-ip 10.2.102.1 num-packets 20 interval 20
+frequency 10
+timeout 1000
+threshold 150
+ip sla schedule 12 life forever start-time now
+
+track 1 ip sla 1 reachability
+delay down 5 up 30
+
+track 2 ip sla 2 reachability
+delay down 5 up 30
+
+track 11 ip sla 11 state
+delay down 5 up 30
+
+track 12 ip sla 12 state
+delay down 5 up 30
+
+ip access-list extended APP-VOIX
+permit udp any any eq 5060
+permit udp any any range 16384 32767
+
+ip access-list extended APP-WEB
+permit tcp any any eq 443
+permit tcp any any eq 22
+
+route-map SDWAN-POLICY permit 10
+description VOIX : mpls puis biz-internet
+match ip address APP-VOIX
+set ip next-hop verify-availability 10.2.101.0 10 track 11
+set ip next-hop verify-availability 10.2.102.0 20 track 12
+
+route-map SDWAN-POLICY permit 20
+description WEB/SSH : biz-internet puis mpls
+match ip address APP-WEB
+set ip next-hop verify-availability 10.2.102.0 10 track 2
+set ip next-hop verify-availability 10.2.101.0 20 track 1
+
+route-map SDWAN-POLICY permit 30
+
+interface FastEthernet4/1
+ip policy route-map SDWAN-POLICY
+
+end
+wr
+
+
+Étape 4 : 
+
+R1 : 
+
+conf t
+
+service timestamps log datetime msec
+logging buffered 16384
+
+event manager applet SDWAN-VOIX-DOWN
+ event track 11 state down
+ action 1.0 syslog priority warnings msg "SD-WAN: SLA VOIX hors seuil sur mpls (track 11 Down), voix vers biz-internet"
+event manager applet SDWAN-VOIX-UP
+ event track 11 state up
+ action 1.0 syslog priority warnings msg "SD-WAN: SLA VOIX retabli sur mpls (track 11 Up), voix revient sur mpls"
+event manager applet SDWAN-INET-DOWN
+ event track 12 state down
+ action 1.0 syslog priority warnings msg "SD-WAN: SLA biz-internet hors seuil (track 12 Down)"
+event manager applet SDWAN-INET-UP
+ event track 12 state up
+ action 1.0 syslog priority warnings msg "SD-WAN: SLA biz-internet retabli (track 12 Up)"
+event manager applet SDWAN-MPLS-DOWN
+ event track 1 state down
+ action 1.0 syslog priority warnings msg "SD-WAN: transport mpls INJOIGNABLE (track 1 Down)"
+event manager applet SDWAN-MPLS-UP
+ event track 1 state up
+ action 1.0 syslog priority warnings msg "SD-WAN: transport mpls disponible (track 1 Up)"
+end
+wr
