@@ -582,3 +582,31 @@ Dans une architecture traditionnelle sans MPLS, chaque routeur du cœur (*core*)
 - Risque : L'entreprise risque de devenir un point de transit non intentionnel (*transit leak*). En annonçant à l'opérateur A les routes qu'elle apprend de l'opérateur B, elle risque de voir transiter par son réseau des flux de données extérieurs qui satureront ses liens et poseront des risques majeurs de sécurité.
 
 - Incident réel : L'incident de Pakistan Telecom (AS 17557) en 2008, qui a accidentellement annoncé une route trop spécifique pour YouTube (204.42.167.0/24) au reste du monde à la suite d'une mauvaise configuration de filtrage, entraînant une panne mondiale de l'accès à YouTube pendant plusieurs heures.
+
+## Rapport d'intervention
+
+### Objectif
+Mettre en place BGP sur l'AS 65002 (iBGP avec route reflector), puis connecter l'entreprise à deux partenaires externes en eBGP avec filtrage, politiques de routage et sécurité de session.
+
+### Intervention réalisée
+- **Étape 1** : création des blocs publics (Loopback100 sur R1 et R4), route par défaut sur R2, EIGRP passif sur g0/0.
+- **Étape 2** : iBGP avec R5 en route reflector (peer-group IBGP-RR, `next-hop-self`), annonce des deux blocs publics par R1 et R4.
+- **Étape 3** : eBGP R2 ↔ R22 (AS 65022) avec agrégat /24, prefix-lists entrée/sortie, mot de passe MD5, `ttl-security`, `maximum-prefix`, `soft-reconfiguration`.
+- **Étape 4** : BFD (300 ms x 3) entre R2 et R22.
+- **Étape 5** : second partenaire R33 (AS 65033), filtrage sortant par prefix-list et AS-path.
+- **Étape 6** : politiques de routage : local-preference 200 en entrée depuis P, AS-path prepend x3 vers Q, communauté `no-export` vers P, filtre de transit en sortie.
+- **Défi** : redondance du route reflector avec un cluster-id commun sur R1 et R5, puis coupure de la Loopback0 de R5.
+
+### Vérifications
+- Voisinages BGP : `show ip bgp summary`
+- Tables BGP et IP de R1, R2, R22 et R33
+- Routes annoncées, reçues et acceptées par voisin
+- `ping` et `traceroute` entre les Loopback100
+- Test de la session après retrait du mot de passe (MD5)
+- Contrôle du TTL security et de BFD
+
+### Problèmes rencontrés
+Les commandes BFD (`bfd interval`, `fall-over bfd`) ne passent pas sur cette version du routeur, mais BFD reste actif et opérationnel pour BGP.
+
+### Conclusion
+L'AS 65002 est interconnecté en iBGP via le route reflector et en eBGP avec deux partenaires. Les préfixes sont filtrés, le trafic entrant et sortant est piloté (LOCAL_PREF, AS-path prepend) et les sessions sont protégées (MD5 + GTSM). Le défi du RR redondant valide le maintien des routes malgré la perte de R5.
