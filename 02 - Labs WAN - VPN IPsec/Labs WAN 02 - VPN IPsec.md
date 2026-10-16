@@ -442,7 +442,7 @@ Le risque : si le tunnel tombe, la statique disparaît (interface down) et la ro
 
 IPsec ajoute un surcoût à chaque paquet : nouvel en-tête IP, en-tête ESP, IV, bourrage et authentification (environ 60 à 73 octets). Un paquet TCP de 1500 octets dépasse alors le MTU du lien une fois encapsulé et doit être fragmenté, ou il est jeté si le bit DF est positionné (et si le PMTUD est bloqué, le transfert se fige alors que le ping passe). Avec ip tcp adjust-mss 1360, le routeur réduit le MSS annoncé dans les SYN TCP, de sorte que les hôtes envoient des segments assez petits pour tenir dans le tunnel sans fragmentation, en accord avec ip mtu 1400.
 
-## Rapport d'intervention - TP 02 : VPN IPsec
+## Rapport d'intervention
 
 ### Objectif
 Sécuriser la liaison entre le siège (PC1) et l'agence (PC2) par IPsec, d'abord en crypto map, puis en VTI avec IKEv2, puis en B2B avec un partenaire.
